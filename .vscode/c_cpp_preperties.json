@@ -1,0 +1,25 @@
+{
+    // 配置调试选项
+    "configurations": [
+        {
+            "name": "Win32",
+            // 预处理器
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            // 寻找头文件的位置。如果要引用第三方库可能需要在这里添加（理论上cmake中添加就行）
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],  
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            // Win下的编译器
+            "intelliSenseMode": "windows-gcc-x86",  
+            // 使用的 makefile 的来源，使用 make files 所提供的配置信息
+            "configurationProvider": "ms-vscode.makefile-tools"
+        }
+    ],
+    "version": 4
+}
