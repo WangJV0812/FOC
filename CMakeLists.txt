@@ -5,32 +5,36 @@ cmake_minimum_required(VERSION 3.16)
 # you need disable the compiler checker.
 include(${CMAKE_CURRENT_LIST_DIR}/toolchain/cmake/cortex_m4f.cmake)
 
-project(FOC C CXX ASM) 
+project(FOC C CXX ASM)
 
 include(${CMAKE_CURRENT_LIST_DIR}/toolchain/cmake/config.cmake)
 
 include(${CMAKE_CURRENT_LIST_DIR}/toolchain/cmake/complie.cmake)
 
-# 生成编译文件
+#################### add files to compiler ####################
 SET(USER_SOURCE
     ${CMAKE_CURRENT_LIST_DIR}/code/core/main.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/code/core/stm32g4xx_it.c
-    ${CMAKE_CURRENT_LIST_DIR}/code/core/system_stm32g4xx.c)
+    # ${CMAKE_CURRENT_LIST_DIR}/code/core/stm32g4xx_it.c
+    # ${CMAKE_CURRENT_LIST_DIR}/code/core/system_stm32g4xx.c
+    )
 
-# 编译结果
-ADD_EXECUTABLE(${PROJECT_NAME} ${COMMON_SERVICES_SOURCE} ${USER_SOURCE} ${LINKER_SCRIPT} ${STARTUP_ASM})
+set(ASM_SOURCE
+    ${STARTUP_ASM})
 
-# 定义连接器参数； --gc-sections：指示链接器去掉不用的 section
-SET(CMAKE_EXE_LINKER_FLAGS
-    "${CMAKE_EXE_LINKER_FLAGS} -T ${LINKER_SCRIPT} -Wl,-Map=${PROJECT_BINARY_DIR}/${OUTPUT_EXE_NAME}.map -Wl,--gc-sections,--print-memory-usage"
-)
+set_source_files_properties(${ASM_SOURCES} 
+                            PROPERTIES COMPILE_FLAGS 
+                            "-x assembler-with-cpp")
 
-
-
+add_executable(${PROJECT_NAME} 
+                ${COMMON_SERVICES_SOURCE} 
+                ${USER_SOURCE} 
+                ${LINKER_SCRIPT} 
+                ${ASM_SOURCE})
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/STM32G4xx_HAL_Driver)
 
-
+# link math library
+target_link_libraries(${PROJECT_NAME} m)
 
 
 

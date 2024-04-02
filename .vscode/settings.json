@@ -1,15 +1,18 @@
 {
     "files.associations": {
+        "*.json": "jsonc",
         "stm32f4xx_hal_def.h": "c",
         "bsp_usb.h": "c",
         "usb_device.h": "c",
         "usbd_cdc.h": "c",
         "usbd_conf.h": "c",
         "usbd_desc.h": "c",
-        "usbd_cdc_if.h": "c"
+        "usbd_cdc_if.h": "c",
+        "cstdint": "c"
     },
     "makefile.makePath": "mingw32-make",
-    "cmake.generator": "MinGW Makefiles",
+    // "cmake.generator": "MinGW Makefiles",
+    "cmake.generator": "Ninja",
     "cmake.cmakePath": "C:\\msys64\\mingw64\\bin\\cmake.exe",
     "C_Cpp.default.enableConfigurationSquiggles": true,
     "C_Cpp.errorSquiggles": "enabled",

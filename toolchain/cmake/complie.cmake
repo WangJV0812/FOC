@@ -31,16 +31,6 @@ endif ()
 
 MESSAGE(STATUS "**** Build for ${CMAKE_BUILD_TYPE} ****")
 
-SET(CMAKE_EXE_LINKER_FLAGS
-    "${CMAKE_EXE_LINKER_FLAGS} -T ${LINKER_SCRIPT} -Wl,-Map=${PROJECT_BINARY_DIR}/${OUTPUT_EXE_NAME}.map -Wl,--gc-sections,--print-memory-usage"
-)
-
-add_definitions(
-    -DUSE_HAL_DRIVER 
-    -DSTM32F407xx 
-    -DARM_MATH_CM4 
-) # need -D<macro> to define macro
-
 # 设置库输出路径
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib_obj)
 

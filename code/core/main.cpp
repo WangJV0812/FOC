@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main() {
-    while(true);
-    return ;
+    std::cout << "hello world" << std::endl;
+    return 0;
 }
