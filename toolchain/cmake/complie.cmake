@@ -1,10 +1,11 @@
 add_compile_options(-pipe 
-                    ${MCU_FLAGS} ${VFP_FLAGS} 
-                    -Wall -Werror -fmessage-length=0
+                    ${MCPU_FLAGS} ${VFP_FLAGS} 
+                    -Werror
+                    -Wall -fmessage-length=0
                     -ffunction-sections -fdata-sections -fno-common )
                     
 add_link_options(-pipe
-                ${MCU_FLAGS} ${VFP_FLAGS} 
+                ${MCPU_FLAGS} ${VFP_FLAGS} 
                 -T${LINKER_SCRIPT} 
                 -Wl,--no-warn-rwx-segments # close RWX warning
                 -lm -lc -lnosys # lib options

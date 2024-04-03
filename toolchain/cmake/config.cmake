@@ -12,11 +12,11 @@ add_definitions(
     -DARM_MATH_CM4
     -DUSE_STDPERIPH_DRIVER
     -DSTM32
-    -DSTM32G474xx       # device
-    -DHSE_VALUE=8000000 # HSE clock frequency
-    -DFOC               # project name
-    -DUSING_NON_RTOS=0  # sue RTOS
-    -DUSING_FREERTOS=1  # use FreeRTOS
-    -DUSING_THREADX=2   # use Threadx
+    -DSTM32G474xx               # device
+    -DHSE_VALUE=8000000         # HSE clock frequency
+    -DFOC                       # project name
+    -DUSING_NON_RTOS=0          # sue RTOS
+    -DUSING_FREERTOS=1          # use FreeRTOS
+    -DUSING_THREADX=2           # use Threadx
     -DUSING_RTOS=USING_NON_RTOS # use RTOS in our project
 )

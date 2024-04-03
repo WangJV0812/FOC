@@ -27,6 +27,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+// #include "stm32g4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -48,8 +49,10 @@ extern "C" {
 
 /* USER CODE END EM */
 
+// void HAL_HRTIM_MspPostInit(HRTIM_HandleTypeDef *hhrtim);
 
 /* Exported functions prototypes ---------------------------------------------*/
+// void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
