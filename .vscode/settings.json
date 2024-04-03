@@ -8,7 +8,10 @@
         "usbd_conf.h": "c",
         "usbd_desc.h": "c",
         "usbd_cdc_if.h": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "stm32g4xx.h": "c",
+        "stm32g4xx_hal.h": "c",
+        "stm32g4xx_hal_conf.h": "c"
     },
     "makefile.makePath": "mingw32-make",
     // "cmake.generator": "MinGW Makefiles",

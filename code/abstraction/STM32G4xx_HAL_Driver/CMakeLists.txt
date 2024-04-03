@@ -1,8 +1,14 @@
-aux_source_directory(SRC_PATH ${CMAKE_CURRENT_LIST_DIR}\\Src)
+aux_source_directory (
+    ${CMAKE_CURRENT_LIST_DIR}/Src SRC_PATH
+)
 
-target_sources(${CMAKE_PROJECT_NAME}
-                PRIVATE ${SRC_PATH})
+target_sources (
+    ${PROJECT_NAME}.elf
+    PRIVATE ${SRC_PATH}
+)
 
-include_directories(${CMAKE_PROJECT_NAME}
-                    PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Inc
-                    ${CMAKE_CURRENT_LIST_DIR}/Inc/Legacy)
+target_include_directories (
+    ${PROJECT_NAME}.elf
+    PUBLIC  ${CMAKE_CURRENT_LIST_DIR}/Inc
+            ${CMAKE_CURRENT_LIST_DIR}/Inc/Legacy 
+)
