@@ -9,7 +9,9 @@ add_link_options(-pipe
                 -T${LINKER_SCRIPT} 
                 -Wl,--no-warn-rwx-segments # close RWX warning
                 -lm -lc -lnosys # lib options
-                -Wl,--gc-sections -flto -specs=nano.specs -specs=nosys.specs # optimize options
+                -Wl,--gc-sections -flto
+                -specs=nosys.specs
+                #  -flto -specs=nano.specs -specs=nosys.specs -specs=rdimon.specs # optimize options
                 -Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map -Wl,--cref -Wl,--print-memory-usage # map options
                 ) # if your executable is too large , try option '-s' to strip symbols
 

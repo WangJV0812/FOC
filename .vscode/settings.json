@@ -22,8 +22,8 @@
         "stm32g4xx_hal_tim.h": "c"
     },
     "makefile.makePath": "mingw32-make",
-    "cmake.generator": "MinGW Makefiles",
-    // "cmake.generator": "Ninja",
+    // "cmake.generator": "MinGW Makefiles",
+    "cmake.generator": "Ninja",
     "cmake.cmakePath": "C:\\msys64\\mingw64\\bin\\cmake.exe",
     "C_Cpp.default.enableConfigurationSquiggles": true,
     "C_Cpp.errorSquiggles": "enabled",
