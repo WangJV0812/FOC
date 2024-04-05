@@ -4,7 +4,11 @@ SET(CMAKE_SYSTEM_PROCESSOR cortex-m4)
 SET(THREADX_ARCH "cortex_m4")
 SET(THREADX_TOOLCHAIN "gnu")
 
-ADD_DEFINITIONS(-DARM_MATH_CM4 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -D__FPU_PRESENT=1)
+ADD_DEFINITIONS(
+    -DARM_MATH_CM4 
+    -DARM_MATH_MATRIX_CHECK 
+    -DARM_MATH_ROUNDING 
+)
 
 # you can find the valid compile options in https://developer.arm.com/documentation/100748/0621/Using-Common-Compiler-Options/Common-Arm-Compiler-for-Embedded-toolchain-options?lang=en
 SET(MCPU_FLAGS -mthumb -mthumb-interwork -mcpu=cortex-m4)

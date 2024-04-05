@@ -49,12 +49,6 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/STM32G4xx_HAL_Driver
 #################### link math library ####################
 target_link_libraries(${PROJECT_NAME}.elf m)
 
-
-get_target_property(includes ${PROJECT_NAME}.elf INCLUDE_DIRECTORIES)
-foreach(include ${includes})
-    message("-- **** Include directory for my_executable: ${include} ****")
-endforeach()
-
 # 输出bin hex文件
 add_custom_command(
     TARGET ${PROJECT_NAME}.elf POST_BUILD

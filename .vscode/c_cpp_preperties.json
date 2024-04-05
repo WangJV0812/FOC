@@ -7,7 +7,9 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "__CC_ARM",
+                "__IO"
             ],
             // 寻找头文件的位置。如果要引用第三方库可能需要在这里添加（理论上cmake中添加就行）
             "includePath": [
