@@ -24,10 +24,37 @@
     "makefile.makePath": "mingw32-make",
     // "cmake.generator": "MinGW Makefiles",
     "cmake.generator": "Ninja",
-    "cmake.cmakePath": "C:\\msys64\\mingw64\\bin\\cmake.exe",
+    "cmake.cmakePath": "D:\\Programfile\\Programming\\cmake\\bin\\cmake.exe",
     "C_Cpp.default.enableConfigurationSquiggles": true,
     "C_Cpp.errorSquiggles": "enabled",
     "C_Cpp.intelliSenseEngine":"default",
     "editor.suggest.snippetsPreventQuickSuggestions":true,
     // "editor.suggest.snippetsPreventQuickSuggestions": true,
+
+    // 设置为默认终端
+    "terminal.integrated.defaultProfile.windows": "mysys2-mingw64", 
+    "terminal.integrated.profiles.windows": {
+        "mysys2-mingw64": {
+            "path": "cmd.exe", // 使用cmd作为父进程启动终端
+            "args": ["/c","C:\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -here"]
+        }
+    },
+    "cmake.showConfigureWithDebuggerNotification": false,
+    "cmake.options.statusBarVisibility": "icon",
+    "workbench.iconTheme": "material-icon-theme",
+    "stm32-for-vscode.openOCDPath": "C:\\MSYS64\\MINGW64\\BIN\\OPENOCD.EXE",
+    "stm32-for-vscode.makePath": "C:\\MSYS64\\USR\\BIN\\MAKE.EXE",
+    "stm32-for-vscode.armToolchainPath": "C:\\MSYS64\\MINGW64\\BIN",
+    "terminal.integrated.automationProfile.windows": {
+        "path": "powershell.exe",
+    },
+
+
+    // cortex debug setting
+    "cortex-debug.liveWatchRefreshRate": 100,
+    "cortex-debug.armToolchainPath": "C:\\msys64\\mingw64\\bin",
+    "cortex-debug.armToolchainPath.windows": "C:\\msys64\\mingw64\\bin",
+    "cortex-debug.openocdPath": "C:\\msys64\\mingw64\\bin\\openocd.exe",
+    "cortex-debug.gdbPath": "D:\\Programfile\\Programming\\Embedded\\GunArmEmbeddedToolChain\\bin\\arm-none-eabi-gdb.exe"
+
 }

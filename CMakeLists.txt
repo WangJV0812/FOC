@@ -47,7 +47,10 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/CMSIS)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/STM32G4xx_HAL_Driver)
 
 #################### link math library ####################
-target_link_libraries(${PROJECT_NAME}.elf m)
+target_link_libraries(
+    ${PROJECT_NAME}.elf 
+    m       # Math lib
+)
 
 # 输出bin hex文件
 add_custom_command(
@@ -58,3 +61,5 @@ add_custom_command(
     COMMENT "EXCUTABLE SIZE:"
     COMMAND ${SIZE} ${PROJECT_NAME}.elf
 )
+
+include(${CMAKE_CURRENT_LIST_DIR}/toolchain/cmake/custom_rule.cmake)

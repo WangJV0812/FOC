@@ -19,4 +19,5 @@ add_definitions(
     -DUSING_FREERTOS=1          # use FreeRTOS
     -DUSING_THREADX=2           # use Threadx
     -DUSING_RTOS=USING_NON_RTOS # use RTOS in our project
+    # -D<macro>                   # use micro lib
 )

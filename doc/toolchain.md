@@ -57,14 +57,14 @@
 
 `vscode`怎么安装应该不需要介绍吧(应该吧)。可以直接在 [Visual Studio Code installer](https://code.visualstudio.com/Download) 下载并安装。安装好 vscode 后，建议安装上面说的那些插件。在这里我再列一下，可以安装一个打一个勾 ;) 。
 
-- [x] `clangd`
-- [x] `Embedded Tools`
-- [x] `cmake`
-- [x] `cmake-tool`
-- [x] `c/c++`
-- [x] `Makefile Tools`
-- [x] `Git Graph`
-- [x] `GitLens`
+- `clangd`
+- `Embedded Tools`
+- `cmake`
+- `cmake-tool`
+- `c/c++`
+- `Makefile Tools`
+- `Git Graph`
+- `GitLens`
 
 ### 2.2 安装 Msys2
 

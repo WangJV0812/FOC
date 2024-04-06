@@ -5,45 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "CortexDebug-STLink",
+            "name": "STLink",
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "runToEntryPoint": "main",
-            "executable": "${workspaceFolder}/gcc/build/demo",
-            "device": "STM32F429BIT6", // https://www.segger.com/downloads/supported-devices.php
+            "executable": "${workspaceFolder}/build/FOC.elf",
+            "device": "STM32G474VET6", // https://www.segger.com/downloads/supported-devices.php
             "svdFile": "${workspaceFolder}/toolchain/svd/STM32G474xx.svd", // https://github.com/posborne/cmsis-svd
-            "preLaunchTask": "2. Build (Debug)",
+            "preLaunchTask": "build",
             "servertype": "openocd", // 使用的GDB Server
             "configFiles": [
-                "${workspaceFolder}/toolchain/openocd_scripts/openocd-stm32f4-stlink.cfg"
+                "${workspaceFolder}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg"
             ]
-        },
-        {
-            "name": "CortexDebug-Jlink",
-            "type": "cortex-debug",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/gcc/build/demo",
-            "device": "STM32F429BI",
-            "runToEntryPoint": "main",
-            "showDevDebugOutput": "none",
-            "servertype": "jlink",
-            "svdPath": "${workspaceFolder}/toolchain/svd/STM32G474xx.svd", // https://github.com/posborne/cmsis-svd
-            "preLaunchTask": "2. Build (Debug)", /// 在进入运行前，执行的任务
-        },
-        {
-            "name": "CortexDebug-PyOCD",
-            "type": "cortex-debug",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "runToEntryPoint": "main",
-            "executable": "${workspaceFolder}/gcc/build/demo",
-            "targetId": "STM32F429BI", // https://www.segger.com/downloads/supported-devices.php
-            "svdFile": "${workspaceFolder}/toolchain/svd/STM32G474xx.svd", // https://github.com/posborne/cmsis-svd
-            "preLaunchTask": "2. Build (Debug)",
-            "servertype": "pyocd", /// 使用的GDB Server
-            "cmsisPack": "C:/Users/liuy9/AppData/Local/cmsis-pack-manager/cmsis-pack-manager/Keil/STM32F4xx_DFP/2.16.0.pack"
         }
     ]
 }
