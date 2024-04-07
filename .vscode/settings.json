@@ -19,7 +19,10 @@
         "random": "c",
         "stop_token": "c",
         "main.h": "c",
-        "stm32g4xx_hal_tim.h": "c"
+        "stm32g4xx_hal_tim.h": "c",
+        "bsp_spi.h": "c",
+        "bsp_rcc.h": "c",
+        "bsp.h": "c"
     },
     "makefile.makePath": "mingw32-make",
     // "cmake.generator": "MinGW Makefiles",
@@ -51,10 +54,14 @@
 
 
     // cortex debug setting
+    
     "cortex-debug.liveWatchRefreshRate": 100,
     "cortex-debug.armToolchainPath": "C:\\msys64\\mingw64\\bin",
     "cortex-debug.armToolchainPath.windows": "C:\\msys64\\mingw64\\bin",
     "cortex-debug.openocdPath": "C:\\msys64\\mingw64\\bin\\openocd.exe",
-    "cortex-debug.gdbPath": "D:\\Programfile\\Programming\\Embedded\\GunArmEmbeddedToolChain\\bin\\arm-none-eabi-gdb.exe"
+    "cortex-debug.gdbPath": "D:\\Programfile\\Programming\\Embedded\\GunArmEmbeddedToolChain\\bin\\arm-none-eabi-gdb.exe",
+    "C_Cpp.default.configurationProvider": "cmsis-csolution",
+    "cortex-debug.variableUseNaturalFormat": true,
+    "c-cpp-compile-run.should-show-notifications": false
 
 }

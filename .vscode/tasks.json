@@ -7,7 +7,7 @@
             "command": "cd ${workspaceFolder}/build; ninja -j18; cd ${workspaceFolder}",
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             }
         },
         {
@@ -16,7 +16,7 @@
             "command": "cd ${workspaceFolder}/build; ninja -j18; ninja download_stlink; cd ${workspaceFolder}",
             "group": {
                 "kind": "build",
-                "isDefault": false,
+                "isDefault": true,
             }
         }
     ]

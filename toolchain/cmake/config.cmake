@@ -21,3 +21,7 @@ add_definitions(
     -DUSING_RTOS=USING_NON_RTOS # use RTOS in our project
     # -D<macro>                   # use micro lib
 )
+
+set(FLASH_ADDRESS 0x08000000)
+
+set(OPENOCD_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg )

@@ -28,7 +28,7 @@ elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
     add_compile_options(-Os)
 else ()
     message(STATUS "Minimal optimization, debug info included")
-    add_compile_options(-Og -g -gdwarf-2)
+    add_compile_options(-O0 -g -gdwarf-2)
     add_definitions(-DESC_DEBUG) # ESC Debug
 endif ()
 
