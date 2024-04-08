@@ -24,4 +24,5 @@ add_definitions(
 
 set(FLASH_ADDRESS 0x08000000)
 
-set(OPENOCD_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg )
+set(OPENOCD_STLINK_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg )
+set(OPENOCD_JLINK_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg )

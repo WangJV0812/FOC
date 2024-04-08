@@ -8,7 +8,7 @@
                 "_DEBUG",
                 "UNICODE",
                 "USE_HAL_DRIVER",
-                "STM32G474VET6",
+                // "STM32G474VET6",
                 "_UNICODE",
                 "__CC_ARM",
                 "__IO"
