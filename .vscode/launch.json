@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "STLink debug",
+            "name": "stlink debug",
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceFolder}",
@@ -18,6 +18,10 @@
             "configFiles": [
                 "${workspaceFolder}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg"
             ],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
             "swoConfig": {
                 "enabled": true,
                 "cpuFrequency": 170000000,  // 170MHz
@@ -35,7 +39,7 @@
             }
         },
         {
-            "name": "JLink debug",
+            "name": "jlink debug",
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceFolder}",
@@ -48,6 +52,10 @@
             "configFiles": [
                 "${workspaceFolder}/toolchain/openocd_scripts/openocd-stm32g4-jlink.cfg"
             ],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
             "swoConfig": {
                 "enabled": true,
                 "cpuFrequency": 170000000,  // 170MHz
@@ -63,10 +71,34 @@
                     }
                 ]
             }
+        },
+        {
+            "name": "stlink-server-debug",
+            "cwd": "${workspaceFolder}",
+            "type": "cortex-debug",
+            "executable": "${command:cmake.launchTargetPath}", //or fixed file path: build/stm32h735g-dk-led.elf
+            "request": "launch",                //Use "attach" to connect to target w/o elf download
+            "servertype": "stlink",
+            "device": "STM32G474VET6",                       //MCU used, ex. "STM32H735IG"
+            "interface": "swd",
+            "serialNumber": "",                 //Set ST-Link ID if you use multiple at the same time
+            "runToEntryPoint": "main",
+            "svdFile": "${workspaceFolder}/toolchain/svd/STM32G474xx.svd",      //Path to SVD file to see registers
+            "v1": false,
+            "showDevDebugOutput": "both",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            /* Will get automatically detected if STM32CubeIDE is installed to default directory
+               or it can be manually provided if necessary.. */
+            "serverpath": "D:\\Programfile\\Programming\\Embedded\\STM32CubeIDE_1.14.1\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.win32_2.1.100.202310302101\\tools\\bin\\ST-LINK_gdbserver.exe",
+            "armToolchainPath": "D:\\Programfile\\Programming\\Embedded\\STM32CubeIDE_1.14.1\\STM32CubeIDE\\plugins\\com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.win32_2.1.100.202310302101\\tools\\bin",
+            "stm32cubeprogrammer": "D:\\Programfile\\Programming\\Embedded\\STM32CudeProgrammer\\bin",
+
+            /* If you use external loader, add additional arguments */
+            // "serverArgs": ["--extload", "path/to/ext/loader.stldr"],
         }
-
-
-
     ]
 }
  

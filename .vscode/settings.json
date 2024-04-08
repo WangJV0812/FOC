@@ -42,7 +42,6 @@
             "args": ["/c","C:\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -here"]
         }
     },
-    "cmake.showConfigureWithDebuggerNotification": false,
     "cmake.options.statusBarVisibility": "icon",
     "workbench.iconTheme": "material-icon-theme",
     "stm32-for-vscode.openOCDPath": "C:\\MSYS64\\MINGW64\\BIN\\OPENOCD.EXE",
@@ -54,14 +53,12 @@
 
 
     // cortex debug setting
-    
-    "cortex-debug.liveWatchRefreshRate": 100,
+    "cortex-debug.liveWatchRefreshRate": 250,
     "cortex-debug.armToolchainPath": "C:\\msys64\\mingw64\\bin",
     "cortex-debug.armToolchainPath.windows": "C:\\msys64\\mingw64\\bin",
     "cortex-debug.openocdPath": "C:\\msys64\\mingw64\\bin\\openocd.exe",
     "cortex-debug.gdbPath": "D:\\Programfile\\Programming\\Embedded\\GunArmEmbeddedToolChain\\bin\\arm-none-eabi-gdb.exe",
-    "C_Cpp.default.configurationProvider": "cmsis-csolution",
-    "cortex-debug.variableUseNaturalFormat": true,
+    "cortex-debug.variableUseNaturalFormat": false,
     "c-cpp-compile-run.should-show-notifications": false
 
 }
