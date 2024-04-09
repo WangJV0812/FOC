@@ -46,6 +46,8 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/CMSIS)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/STM32G4xx_HAL_Driver)
 
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/bsp)
+
 #################### link math library ####################
 target_link_libraries(
     ${PROJECT_NAME}.elf 

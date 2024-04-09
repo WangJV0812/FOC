@@ -1,6 +1,12 @@
-#include <iostream>
+#include "main.h"
+#include "bsp.h"
 
-int main() {
-    // std::cout << "hello world" << std::endl;
+int main()
+{
+    bsp_init();
+
+    while (1) {
+        
+    }
     return 0;
 }

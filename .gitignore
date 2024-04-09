@@ -34,3 +34,5 @@
 build
 .cache
 *.idx
+
+output
