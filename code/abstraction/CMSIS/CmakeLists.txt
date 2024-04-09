@@ -1,6 +1,7 @@
 target_sources (
     ${PROJECT_NAME}.elf
-    PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src/_cmsis_init_.c
+    PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src/syscalls.c
+    PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src/sysmem.c
 )
 
 target_include_directories (
