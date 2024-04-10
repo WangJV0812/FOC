@@ -36,3 +36,4 @@ build
 *.idx
 
 output
+config_default

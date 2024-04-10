@@ -20,48 +20,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32g4xx_it.h"
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN TD */
-
-/* USER CODE END TD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_spi3_rx;
+extern DMA_HandleTypeDef hdma_spi3_tx;
 extern DMA_HandleTypeDef hdma_spi4_rx;
+extern DMA_HandleTypeDef hdma_spi4_tx;
+extern SPI_HandleTypeDef hspi3;
 extern SPI_HandleTypeDef hspi4;
 extern TIM_HandleTypeDef htim3;
-
-/* USER CODE BEGIN EV */
-
-/* USER CODE END EV */
 
 /******************************************************************************/
 /*           Cortex-M4 Processor Interruption and Exception Handlers          */
@@ -153,12 +120,38 @@ void DMA1_Channel1_IRQHandler(void)
     HAL_DMA_IRQHandler(&hdma_spi4_rx);
 }
 
+void DMA1_Channel2_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(&hdma_spi4_tx);
+}
+
+/**
+  * @brief This function handles DMA1 channel3 global interrupt.
+  */
+void DMA1_Channel3_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(&hdma_spi3_rx);
+}
+
+/**
+  * @brief This function handles DMA1 channel4 global interrupt.
+  */
+void DMA1_Channel4_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(&hdma_spi3_tx);
+}
+
 /**
   * @brief This function handles SPI4 global interrupt.
   */
 void SPI4_IRQHandler(void)
 {
     HAL_SPI_IRQHandler(&hspi4);
+}
+
+void SPI3_IRQHandler(void)
+{
+    HAL_SPI_IRQHandler(&hspi3);
 }
 
 void TIM3_IRQHandler(void)

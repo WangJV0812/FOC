@@ -7,7 +7,7 @@ add_compile_options(-pipe
 add_link_options(-pipe
                 ${MCPU_FLAGS} ${VFP_FLAGS} 
                 -T${LINKER_SCRIPT} 
-                -Wl,--no-warn-rwx-segments # close RWX warning
+                # -Wl,--no-warn-rwx-segments # close RWX warning
                 -lm -lc -lnosys # lib options
                 -Wl,--gc-sections -flto
                 -specs=nosys.specs

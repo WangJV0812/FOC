@@ -9,6 +9,7 @@ extern "C" {
 
 __weak void Error_Handler(void);
 
+#include "bsp_gpio.h"
 #include "bsp_tim.h"
 #include "bsp_dma.h"
 #include "bsp_spi.h"

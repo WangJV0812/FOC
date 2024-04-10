@@ -3,10 +3,15 @@
 
 SPI_HandleTypeDef hspi3;
 SPI_HandleTypeDef hspi4;
+DMA_HandleTypeDef hdma_spi3_rx;
+DMA_HandleTypeDef hdma_spi3_tx;
 DMA_HandleTypeDef hdma_spi4_rx;
+DMA_HandleTypeDef hdma_spi4_tx;
 
-uint16_t SPI3_Rx_Buffer = 0;
-uint16_t SPI4_Rx_Buffer = 0;
+uint16_t SPI3_Rx_Buffer;
+uint16_t SPI3_Tx_Buffer;
+uint16_t SPI4_Rx_Buffer;
+uint16_t SPI4_Tx_Buffer;
 
 /**
  * @brief 
@@ -21,8 +26,9 @@ void MX_SPI3_Init(void)
     hspi3.Init.DataSize          = SPI_DATASIZE_16BIT;
     hspi3.Init.CLKPolarity       = SPI_POLARITY_HIGH;
     hspi3.Init.CLKPhase          = SPI_PHASE_2EDGE;
+    // hspi3.Init.NSS               = SPI_NSS_HARD_OUTPUT;
     hspi3.Init.NSS               = SPI_NSS_SOFT;
-    hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+    hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
     hspi3.Init.FirstBit          = SPI_FIRSTBIT_MSB;
     hspi3.Init.TIMode            = SPI_TIMODE_DISABLE;
     hspi3.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLE;
@@ -33,6 +39,8 @@ void MX_SPI3_Init(void)
     if (HAL_SPI_Init(&hspi3) != HAL_OK) {
         Error_Handler();
     }
+
+    // __HAL_SPI_ENABLE(&hspi3);
 }
 
 /**
@@ -48,8 +56,9 @@ void MX_SPI4_Init(void)
     hspi4.Init.DataSize          = SPI_DATASIZE_16BIT;
     hspi4.Init.CLKPolarity       = SPI_POLARITY_HIGH;
     hspi4.Init.CLKPhase          = SPI_PHASE_2EDGE;
-    hspi4.Init.NSS               = SPI_NSS_SOFT;
-    hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+    // hspi4.Init.NSS               = SPI_NSS_HARD_OUTPUT;
+    hspi3.Init.NSS               = SPI_NSS_SOFT;
+    hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
     hspi4.Init.FirstBit          = SPI_FIRSTBIT_MSB;
     hspi4.Init.TIMode            = SPI_TIMODE_DISABLE;
     hspi4.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLE;
@@ -60,6 +69,8 @@ void MX_SPI4_Init(void)
     if (HAL_SPI_Init(&hspi4) != HAL_OK) {
         Error_Handler();
     }
+
+    // __HAL_SPI_ENABLE(&hspi4);
 }
 
 /**
@@ -71,47 +82,95 @@ void MX_SPI4_Init(void)
 void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
-
     if (spiHandle->Instance == SPI3) {
         /* SPI3 clock enable */
         __HAL_RCC_SPI3_CLK_ENABLE();
 
+        __HAL_RCC_GPIOA_CLK_ENABLE();
         __HAL_RCC_GPIOC_CLK_ENABLE();
         /**SPI3 GPIO Configuration
-        PC10     ------> SPI3_SCK
-        PC11     ------> SPI3_MISO
-        PC12     ------> SPI3_MOSI
-        */
+            PA4     ------> SPI3_NSS
+            PC10     ------> SPI3_SCK
+            PC11     ------> SPI3_MISO
+            PC12     ------> SPI3_MOSI
+            */
+        // GPIO_InitStruct.Pin       = GPIO_PIN_4;
+        // GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+        // GPIO_InitStruct.Pull      = GPIO_NOPULL;
+        // GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_LOW;
+        // GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
+        // HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
         GPIO_InitStruct.Pin       = GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12;
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull      = GPIO_NOPULL;
-        GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
         GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
         HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+        /* SPI3 DMA Init */
+        /* SPI3_RX Init */
+        hdma_spi3_rx.Instance                 = DMA1_Channel3;
+        hdma_spi3_rx.Init.Request             = DMA_REQUEST_SPI3_RX;
+        hdma_spi3_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
+        hdma_spi3_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
+        hdma_spi3_rx.Init.MemInc              = DMA_MINC_ENABLE;
+        hdma_spi3_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        hdma_spi3_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        hdma_spi3_rx.Init.Mode                = DMA_CIRCULAR;
+        hdma_spi3_rx.Init.Priority            = DMA_PRIORITY_HIGH;
+        if (HAL_DMA_Init(&hdma_spi3_rx) != HAL_OK) {
+            Error_Handler();
+        }
+
+        __HAL_LINKDMA(spiHandle, hdmarx, hdma_spi3_rx);
+
+        /* SPI3_TX Init */
+        hdma_spi3_tx.Instance                 = DMA1_Channel4;
+        hdma_spi3_tx.Init.Request             = DMA_REQUEST_SPI3_TX;
+        hdma_spi3_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        hdma_spi3_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
+        hdma_spi3_tx.Init.MemInc              = DMA_MINC_ENABLE;
+        hdma_spi3_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        hdma_spi3_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        hdma_spi3_tx.Init.Mode                = DMA_NORMAL;
+        hdma_spi3_tx.Init.Priority            = DMA_PRIORITY_LOW;
+        if (HAL_DMA_Init(&hdma_spi3_tx) != HAL_OK) {
+            Error_Handler();
+        }
+
+        __HAL_LINKDMA(spiHandle, hdmatx, hdma_spi3_tx);
+
+        /* SPI3 interrupt Init */
+        HAL_NVIC_SetPriority(SPI3_IRQn, 0, 0);
+        HAL_NVIC_EnableIRQ(SPI3_IRQn);
+
     } else if (spiHandle->Instance == SPI4) {
         /* SPI4 clock enable */
         __HAL_RCC_SPI4_CLK_ENABLE();
 
         __HAL_RCC_GPIOE_CLK_ENABLE();
         /**SPI4 GPIO Configuration
-        PE2     ------> SPI4_SCK
-        PE5     ------> SPI4_MISO
-        PE6     ------> SPI4_MOSI
-        */
-        GPIO_InitStruct.Pin       = GPIO_PIN_2 | GPIO_PIN_5 | GPIO_PIN_6;
+            PE2     ------> SPI4_SCK
+            PE4     ------> SPI4_NSS
+            PE5     ------> SPI4_MISO
+            PE6     ------> SPI4_MOSI
+        */  
+        // GPIO_InitStruct.Pin       = GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6;
+        GPIO_InitStruct.Pin = 0x00;
+        GPIO_InitStruct.Pin       = (GPIO_PIN_2 | GPIO_PIN_5 | GPIO_PIN_6);
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull      = GPIO_NOPULL;
-        GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
         GPIO_InitStruct.Alternate = GPIO_AF5_SPI4;
         HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
         /* SPI4 DMA Init */
         /* SPI4_RX Init */
-        hdma_spi4_rx.Instance                 = DMA1_Channel1;        /* dma channel 1 */
-        hdma_spi4_rx.Init.Request             = DMA_REQUEST_SPI4_RX;  /* spi rx request */
-        hdma_spi4_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY; /* periph to memory */
-        hdma_spi4_rx.Init.PeriphInc           = DMA_PINC_DISABLE;     /* */
+        hdma_spi4_rx.Instance                 = DMA1_Channel1;
+        hdma_spi4_rx.Init.Request             = DMA_REQUEST_SPI4_RX;
+        hdma_spi4_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
+        hdma_spi4_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
         hdma_spi4_rx.Init.MemInc              = DMA_MINC_ENABLE;
         hdma_spi4_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
         hdma_spi4_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
@@ -122,6 +181,22 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
         }
 
         __HAL_LINKDMA(spiHandle, hdmarx, hdma_spi4_rx);
+
+        /* SPI4_TX Init */
+        hdma_spi4_tx.Instance                 = DMA1_Channel2;
+        hdma_spi4_tx.Init.Request             = DMA_REQUEST_SPI4_TX;
+        hdma_spi4_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        hdma_spi4_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
+        hdma_spi4_tx.Init.MemInc              = DMA_MINC_ENABLE;
+        hdma_spi4_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        hdma_spi4_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        hdma_spi4_tx.Init.Mode                = DMA_NORMAL;
+        hdma_spi4_tx.Init.Priority            = DMA_PRIORITY_LOW;
+        if (HAL_DMA_Init(&hdma_spi4_tx) != HAL_OK) {
+            Error_Handler();
+        }
+
+        __HAL_LINKDMA(spiHandle, hdmatx, hdma_spi4_tx);
 
         /* SPI4 interrupt Init */
         HAL_NVIC_SetPriority(SPI4_IRQn, 0, 0);
@@ -147,7 +222,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
         PC11     ------> SPI3_MISO
         PC12     ------> SPI3_MOSI
         */
-        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4);
+        // HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4);
 
         HAL_GPIO_DeInit(GPIOC, GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12);
     } else if (spiHandle->Instance == SPI4) {
@@ -160,7 +235,8 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
         PE5     ------> SPI4_MISO
         PE6     ------> SPI4_MOSI
         */
-        HAL_GPIO_DeInit(GPIOE, GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_5 | GPIO_PIN_6);
+        // HAL_GPIO_DeInit(GPIOE, GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_5 | GPIO_PIN_6);
+        HAL_GPIO_DeInit(GPIOE, GPIO_PIN_2 | GPIO_PIN_5 | GPIO_PIN_6);
 
         /* SPI4 DMA DeInit */
         HAL_DMA_DeInit(spiHandle->hdmarx);
@@ -170,11 +246,52 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
     }
 }
 
+/**
+ * @brief 
+ * @param  hspi             My Param doc
+ * @date 2024-04-10
+ * @author wangjv (wangjv0812@126.com)
+ */
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef* hspi)
 {
     if (hspi->Instance == SPI3) {
-        HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI3_Rx_Buffer, 2);
-    } else if (hspi->Instance == SPI4) {
         HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI4_Rx_Buffer, 2);
+    } else if (hspi->Instance == SPI4) {
+        HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI3_Rx_Buffer, 2);
     }
+}
+
+/**
+ * @brief 
+ * @param  hspi             My Param doc
+ * @date 2024-04-10
+ * @author wangjv (wangjv0812@126.com)
+ */
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+
+}
+
+/**
+  * @brief  SPI error callbacks.
+  * @param  hspi: SPI handle
+  * @note   This example shows a simple way to report transfer error, and you can
+  *         add your own implementation.
+  * @retval None
+  */
+void HAL_SPI_ErrorCallback(SPI_HandleTypeDef* hspi) {}
+
+
+
+
+/**
+ * @brief 
+ * @return HAL_StatusTypeDef 
+ * @date 2024-04-10
+ * @author wangjv (wangjv0812@126.com)
+ */
+HAL_StatusTypeDef SPI4_Receive_DMA()
+{
+    HAL_StatusTypeDef status = HAL_SPI_Receive_DMA(&hspi4, (uint8_t*)&SPI4_Rx_Buffer, 0);
+    return status;
 }
