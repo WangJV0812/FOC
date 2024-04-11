@@ -22,6 +22,7 @@ SET(USER_SOURCE
 # add public head files
 include_directories (
     ${CMAKE_CURRENT_LIST_DIR}/code/core/Inc
+    ${CMAKE_CURRENT_LIST_DIR}/code/core/config
 )
 
 set(ASM_SOURCE

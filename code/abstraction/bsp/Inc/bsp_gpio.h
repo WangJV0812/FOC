@@ -18,7 +18,6 @@ extern "C" {
 void MX_GPIO_Init(void);
 void led1_set(GPIO_PinState state);
 void led2_set(GPIO_PinState state);
-void spi_cs_set(GPIO_PinState state);
 
 #ifdef __cplusplus
 }

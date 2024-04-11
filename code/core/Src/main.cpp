@@ -7,9 +7,7 @@ int main()
 {
     bsp_init();
     while (1) {
-        spi_cs_set(GPIO_PIN_SET);
-        HAL_Delay(10);
-        spi_cs_set(GPIO_PIN_RESET);
+        HAL_Delay(1);
         SPI4_Receive_DMA();
     }
     return 0;

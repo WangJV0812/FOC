@@ -1,4 +1,6 @@
 #include "bsp.h"
+#include "bsp_config.h"
+#include "stm32g4xx_hal_gpio.h"
 #include "stm32g4xx_hal_spi.h"
 
 SPI_HandleTypeDef hspi3;
@@ -20,14 +22,17 @@ uint16_t SPI4_Tx_Buffer;
  */
 void MX_SPI3_Init(void)
 {
-    hspi3.Instance               = SPI3;
-    hspi3.Init.Mode              = SPI_MODE_MASTER;
-    hspi3.Init.Direction         = SPI_DIRECTION_2LINES;
-    hspi3.Init.DataSize          = SPI_DATASIZE_16BIT;
-    hspi3.Init.CLKPolarity       = SPI_POLARITY_HIGH;
-    hspi3.Init.CLKPhase          = SPI_PHASE_2EDGE;
-    // hspi3.Init.NSS               = SPI_NSS_HARD_OUTPUT;
+    hspi3.Instance         = SPI3;
+    hspi3.Init.Mode        = SPI_MODE_MASTER;
+    hspi3.Init.Direction   = SPI_DIRECTION_2LINES;
+    hspi3.Init.DataSize    = SPI_DATASIZE_16BIT;
+    hspi3.Init.CLKPolarity = SPI_POLARITY_HIGH;
+    hspi3.Init.CLKPhase    = SPI_PHASE_2EDGE;
+#if BSP_SPI3_USE_HARD_CSS == 1
+    hspi3.Init.NSS               = SPI_NSS_HARD_OUTPUT;
+#elif BSP_SPI3_USE_HARD_CSS == 0
     hspi3.Init.NSS               = SPI_NSS_SOFT;
+#endif
     hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
     hspi3.Init.FirstBit          = SPI_FIRSTBIT_MSB;
     hspi3.Init.TIMode            = SPI_TIMODE_DISABLE;
@@ -50,14 +55,17 @@ void MX_SPI3_Init(void)
  */
 void MX_SPI4_Init(void)
 {
-    hspi4.Instance               = SPI4;
-    hspi4.Init.Mode              = SPI_MODE_MASTER;
-    hspi4.Init.Direction         = SPI_DIRECTION_2LINES;
-    hspi4.Init.DataSize          = SPI_DATASIZE_16BIT;
-    hspi4.Init.CLKPolarity       = SPI_POLARITY_HIGH;
-    hspi4.Init.CLKPhase          = SPI_PHASE_2EDGE;
-    // hspi4.Init.NSS               = SPI_NSS_HARD_OUTPUT;
+    hspi4.Instance         = SPI4;
+    hspi4.Init.Mode        = SPI_MODE_MASTER;
+    hspi4.Init.Direction   = SPI_DIRECTION_2LINES;
+    hspi4.Init.DataSize    = SPI_DATASIZE_16BIT;
+    hspi4.Init.CLKPolarity = SPI_POLARITY_HIGH;
+    hspi4.Init.CLKPhase    = SPI_PHASE_2EDGE;
+#if BSP_SPI4_USE_HARD_CSS == 1
+    hspi4.Init.NSS               = SPI_NSS_HARD_OUTPUT;
+#elif BSP_SPI4_USE_HARD_CSS == 0
     hspi4.Init.NSS               = SPI_NSS_SOFT;
+#endif
     hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
     hspi4.Init.FirstBit          = SPI_FIRSTBIT_MSB;
     hspi4.Init.TIMode            = SPI_TIMODE_DISABLE;
@@ -86,18 +94,22 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
 
         __HAL_RCC_GPIOA_CLK_ENABLE();
         __HAL_RCC_GPIOC_CLK_ENABLE();
+
         /**SPI3 GPIO Configuration
             PA4     ------> SPI3_NSS
             PC10     ------> SPI3_SCK
             PC11     ------> SPI3_MISO
             PC12     ------> SPI3_MOSI
             */
-        // GPIO_InitStruct.Pin       = GPIO_PIN_4;
-        // GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-        // GPIO_InitStruct.Pull      = GPIO_NOPULL;
-        // GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_LOW;
-        // GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
-        // HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+#if BSP_SPI3_USE_HARD_CSS == 1
+        GPIO_InitStruct.Pin       = GPIO_PIN_4;
+        GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull      = GPIO_PULLUP;
+        GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+#endif
 
         GPIO_InitStruct.Pin       = GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12;
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
@@ -153,15 +165,30 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
             PE4     ------> SPI4_NSS
             PE5     ------> SPI4_MISO
             PE6     ------> SPI4_MOSI
-        */  
-        // GPIO_InitStruct.Pin       = GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6;
-        GPIO_InitStruct.Pin = 0x00;
+        */
         GPIO_InitStruct.Pin       = (GPIO_PIN_2 | GPIO_PIN_5 | GPIO_PIN_6);
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull      = GPIO_NOPULL;
         GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
         GPIO_InitStruct.Alternate = GPIO_AF5_SPI4;
         HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+#if BSP_SPI4_USE_HARD_CSS  == 0
+        GPIO_InitStruct = {0};
+        GPIO_InitStruct.Pin       = GPIO_PIN_3;
+        GPIO_InitStruct.Mode      = GPIO_MODE_OUTPUT_PP;
+        GPIO_InitStruct.Pull      = GPIO_PULLUP;
+        GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_LOW;
+
+        HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
+#endif
+
+#if BSP_SPI4_USE_HARD_CSS == 1
+        GPIO_InitStruct.Pin       = GPIO_PIN_4;
+        GPIO_InitStruct.Pull      = GPIO_PULLUP;
+        HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+#endif
 
         /* SPI4 DMA Init */
         /* SPI4_RX Init */
@@ -220,7 +247,10 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
         PC11     ------> SPI3_MISO
         PC12     ------> SPI3_MOSI
         */
-        // HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4);
+#if BSP_SPI3_USE_HARD_CSS == 1
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4);
+#endif
+
 
         HAL_GPIO_DeInit(GPIOC, GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12);
     } else if (spiHandle->Instance == SPI4) {
@@ -233,7 +263,9 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
         PE5     ------> SPI4_MISO
         PE6     ------> SPI4_MOSI
         */
-        // HAL_GPIO_DeInit(GPIOE, GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_5 | GPIO_PIN_6);
+#if BSP_SPI3_USE_HARD_CSS == 1
+        HAL_GPIO_DeInit(GPIOE, GPIO_PIN_3);
+#endif
         HAL_GPIO_DeInit(GPIOE, GPIO_PIN_2 | GPIO_PIN_5 | GPIO_PIN_6);
 
         /* SPI4 DMA DeInit */
@@ -252,11 +284,12 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
  */
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef* hspi)
 {
-    // if (hspi->Instance == SPI3) {
-    //     HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI4_Rx_Buffer, 2);
-    // } else if (hspi->Instance == SPI4) {
-    //     HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI3_Rx_Buffer, 2);
-    // }
+    if (hspi->Instance == SPI3) {
+        // HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI4_Rx_Buffer, 2);
+    } else if (hspi->Instance == SPI4) {
+        // HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI3_Rx_Buffer, 2);
+        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
+    }
 }
 
 /**
@@ -265,10 +298,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef* hspi)
  * @date 2024-04-10
  * @author wangjv (wangjv0812@126.com)
  */
-void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
-{
-
-}
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef* hspi) {}
 
 /**
   * @brief  SPI error callbacks.
@@ -279,9 +309,6 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
   */
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef* hspi) {}
 
-
-
-
 /**
  * @brief 
  * @return HAL_StatusTypeDef 
@@ -290,9 +317,10 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef* hspi) {}
  */
 HAL_StatusTypeDef SPI4_Receive_DMA()
 {
-    // HAL_StatusTypeDef status = HAL_SPI_Receive_DMA(&hspi4, (uint8_t*)&SPI4_Rx_Buffer, 0);
-    // HAL_SPI_Receive_DMA(&hspi3, (uint8_t*)&SPI3_Rx_Buffer, 0);
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_RESET);
+    
+    HAL_StatusTypeDef status = HAL_SPI_Receive(&hspi4, (uint8_t*)&SPI4_Rx_Buffer, 2, 100);
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
 
-    HAL_SPI_Receive(&hspi4, (uint8_t*)&SPI4_Rx_Buffer, 2, 1000);
-    return HAL_OK;
+    return status;
 }
