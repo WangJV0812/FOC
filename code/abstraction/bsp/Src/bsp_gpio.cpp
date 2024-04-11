@@ -1,4 +1,5 @@
 #include "bsp.h"
+#include "stm32g4xx_hal_gpio.h"
 
 void MX_GPIO_Init(void)
 {
@@ -30,6 +31,16 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull  = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(LED2_GPIO_Port, &GPIO_InitStruct);
+
+
+    /**TIM3 GPIO Configuration
+        PE3     ------> TIM3_CH2
+    */
+    GPIO_InitStruct.Pin       = GPIO_PIN_3;
+    GPIO_InitStruct.Mode      = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull      = GPIO_PULLUP;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 }
 
 void led1_set(GPIO_PinState state)
@@ -40,4 +51,9 @@ void led1_set(GPIO_PinState state)
 void led2_set(GPIO_PinState state)
 {
     HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, state);
+}
+
+void spi_cs_set(GPIO_PinState state)
+{
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, state);
 }

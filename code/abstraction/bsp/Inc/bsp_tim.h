@@ -14,6 +14,7 @@ void MX_TIM3_Init(void);
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* tim_pwmHandle);
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle);
 void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle);
+void spi_cs_set(GPIO_PinState state);
 
 #ifdef __cplusplus
 }
