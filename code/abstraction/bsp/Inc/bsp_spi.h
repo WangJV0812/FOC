@@ -24,7 +24,11 @@ extern uint16_t SPI4_Tx_Buffer;
 void MX_SPI3_Init(void);
 void MX_SPI4_Init(void);
 
-HAL_StatusTypeDef SPI4_Receive_DMA();
+void SPI4_Receive();
+void SPI4_Receive_DMA();
+
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef* hspi);
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef* hspi);
 
 #ifdef __cplusplus
 }
