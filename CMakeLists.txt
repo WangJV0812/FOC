@@ -56,7 +56,6 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/bsp)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/module)
 
-
 #################### link math library ####################
 target_link_libraries(
     ${PROJECT_NAME}.elf 

@@ -17,6 +17,7 @@ __weak void Error_Handler(void);
 #include "bsp_rcc.h"
 #include "bsp_adc.h"
 #include "bsp_hrtim.h"
+#include "bsp_cordic.h"
 
 void bsp_init();
 
