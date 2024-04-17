@@ -1,5 +1,4 @@
 #include "bsp.h"
-#include "stm32g4xx_hal_gpio.h"
 
 void MX_GPIO_Init(void)
 {

@@ -22,7 +22,15 @@ add_definitions(
     # -DMARCO                     # use micro lib
 )
 
+add_definitions(
+    -DARM_MATH_MATRIX_CHECK     # check the dimension when performing matrix multiplication   
+    -DARM_MATH_ROUNDING         # enable aggrassive rounding strategies for some function that require less precision
+    -DARM_MATH_LOOPUNROLL       # expand the loop to accelerate computing
+)
+
 set(FLASH_ADDRESS 0x08000000)
 
 set(OPENOCD_STLINK_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg )
 set(OPENOCD_JLINK_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg )
+
+set(IS_USE_DSPLIB ON)

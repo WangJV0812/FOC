@@ -1,11 +1,5 @@
 #include "bsp.h"
-#include "bsp_config.h"
-#include "bsp_spi.h"
-#include "stm32g4xx.h"
-#include "stm32g4xx_hal_def.h"
-#include "stm32g4xx_hal_dma.h"
-#include "stm32g4xx_hal_gpio.h"
-#include "stm32g4xx_hal_spi.h"
+
 
 SPI_HandleTypeDef hspi3;
 SPI_HandleTypeDef hspi4;
@@ -17,7 +11,7 @@ DMA_HandleTypeDef hdma_spi4_tx;
 uint16_t SPI3_Rx_Buffer;
 uint16_t SPI3_Tx_Buffer;
 uint16_t SPI4_Rx_Buffer;
-uint16_t SPI4_Tx_Buffer = 0x1225;
+uint16_t SPI4_Tx_Buffer;
 
 /**
  * @brief 
@@ -151,9 +145,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
         HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
         HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
-        /* SPI3 interrupt Init */
-        HAL_NVIC_SetPriority(SPI3_IRQn, 0, 0);
-        HAL_NVIC_EnableIRQ(SPI3_IRQn);
+        // /* SPI3 interrupt Init */
+        // HAL_NVIC_SetPriority(SPI3_IRQn, 0, 0);
+        // HAL_NVIC_EnableIRQ(SPI3_IRQn);
 
     } else if (spiHandle->Instance == SPI4) {
         /* SPI4 clock enable */
@@ -230,9 +224,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
         HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 0, 0);
         HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 
-        /* SPI4 interrupt Init */
-        HAL_NVIC_SetPriority(SPI4_IRQn, 0, 0);
-        HAL_NVIC_EnableIRQ(SPI4_IRQn);
+        // /* SPI4 interrupt Init */
+        // HAL_NVIC_SetPriority(SPI4_IRQn, 0, 0);
+        // HAL_NVIC_EnableIRQ(SPI4_IRQn);
     }
 }
 
@@ -339,14 +333,16 @@ void SPI4_Receive()
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
 }
 
-void SPI4_Receive_DMA()
+uint16_t SPI4_Receive_DMA(uint16_t transmit_data)
 {
+    uint16_t receive_data = 0;
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_RESET);
 
     if (HAL_SPI_TransmitReceive_DMA(&hspi4, 
-                                    (uint8_t*)&SPI4_Tx_Buffer, 
-                                    (uint8_t*)&SPI4_Rx_Buffer, 
+                                    (uint8_t*)&transmit_data, 
+                                    (uint8_t*)&receive_data, 
                                     2) != HAL_OK) {
         Error_Handler();
     }
+    return receive_data;
 }

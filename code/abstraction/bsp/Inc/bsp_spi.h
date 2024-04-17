@@ -25,7 +25,7 @@ void MX_SPI3_Init(void);
 void MX_SPI4_Init(void);
 
 void SPI4_Receive();
-void SPI4_Receive_DMA();
+uint16_t SPI4_Receive_DMA(uint16_t transmit_data);
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef* hspi);
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef* hspi);

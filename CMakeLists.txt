@@ -23,6 +23,8 @@ SET(USER_SOURCE
 include_directories (
     ${CMAKE_CURRENT_LIST_DIR}/code/core/Inc
     ${CMAKE_CURRENT_LIST_DIR}/code/core/config
+    ${CMAKE_CURRENT_LIST_DIR}/code/abstraction/CMSIS/Include
+
 )
 
 set(ASM_SOURCE
@@ -41,13 +43,19 @@ add_executable(${PROJECT_NAME}.elf
                 ${LINKER_SCRIPT} 
                 ${ASM_SOURCE})
 
-
 #################### add submodules to compiler ####################
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/CMSIS)
+
+if(IS_USE_DSPLIB)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/lib/dsp/Source)
+endif()
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/STM32G4xx_HAL_Driver)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/bsp)
+
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/code/abstraction/module)
+
 
 #################### link math library ####################
 target_link_libraries(
