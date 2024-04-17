@@ -2,7 +2,8 @@
 
 __weak void Error_Handler(void)
 {
-    for(;;);
+    for (;;)
+        ;
 }
 
 /**
@@ -39,8 +40,9 @@ HAL_StatusTypeDef system_init()
 void bsp_init()
 {
     system_init();
-
     MX_CORDIC_Init();
     MX_SPI3_Init();
     MX_SPI4_Init();
+    MX_HRTIM1_Init();
+
 }
