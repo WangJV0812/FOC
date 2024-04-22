@@ -21,3 +21,15 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     VERBATIM
 )
+
+add_custom_target(
+    download_daplink
+    COMMAND openocd -f ${OPENOCD_DAPLINK_CONFIG}
+                    -c "init" -c "halt" 
+                    -c "flash write_image erase ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bin ${FLASH_ADDRESS}"   # programming MUS's xflash
+                    -c "reset"      # reset the target MCU
+                    -c "shutdown"   # shutdown openocd server
+    COMMENT "Downloading firmware to target via openocd"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    VERBATIM
+)

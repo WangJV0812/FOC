@@ -27,6 +27,16 @@
                 "kind": "build",
                 "isDefault": true,
             }
+        },
+        {
+            "label": "download_daplink",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/build; ninja -j18; ninja download_daplink; cd ${workspaceFolder}",
+            "group": {
+                "kind": "build",
+                "isDefault": true,
+            }
         }
+
     ]
 }

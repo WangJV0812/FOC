@@ -73,6 +73,40 @@
             }
         },
         {
+            "name": "daplink debug",
+            "type": "cortex-debug",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "servertype": "openocd",
+            "runToEntryPoint": "main",
+            "executable": "${workspaceFolder}/build/FOC.elf",
+            "device": "STM32G474VET6", // https://www.segger.com/downloads/supported-devices.php
+            "svdFile": "${workspaceFolder}/toolchain/svd/STM32G474xx.svd", // https://github.com/posborne/cmsis-svd
+            "preLaunchTask": "build",
+            "configFiles": [
+                "${workspaceFolder}/toolchain/openocd_scripts/openocd-stm32g4-daplink.cfg"
+            ],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "swoConfig": {
+                "enabled": true,
+                "cpuFrequency": 170000000,  // 170MHz
+                "swoFrequency": 4000000,    // 4MHz
+                "source": "probe",
+                "decoders": 
+                [
+                    {
+                        "type": "console",
+                        "port": 0,
+                        "showOnStartup": true,
+                        "encoding": "ascii"
+                    }
+                ]
+            }
+        },
+        {
             "name": "stlink-server-debug",
             "cwd": "${workspaceFolder}",
             "type": "cortex-debug",

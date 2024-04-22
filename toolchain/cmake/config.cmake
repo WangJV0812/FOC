@@ -32,5 +32,6 @@ set(FLASH_ADDRESS 0x08000000)
 
 set(OPENOCD_STLINK_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg )
 set(OPENOCD_JLINK_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-stlink.cfg )
+set(OPENOCD_DAPLINK_CONFIG ${CMAKE_SOURCE_DIR}/toolchain/openocd_scripts/openocd-stm32g4-daplink.cfg )
 
 set(IS_USE_DSPLIB OFF)

@@ -1,17 +1,19 @@
 # 开发环境搭建
 
 - [开发环境搭建](#开发环境搭建)
-  - [1. 开发工具](#1-开发工具)
-    - [1.1. 需要安装的工具](#11-需要安装的工具)
-    - [1.2. vscode 插件](#12-vscode-插件)
-  - [2. 开发环境搭建](#2-开发环境搭建)
-    - [2.1. 安装编辑器](#21-安装编辑器)
-    - [2.2 安装 Msys2](#22-安装-msys2)
-      - [2.2.1 将 Msys2 添加到 Terminal 下](#221-将-msys2-添加到-terminal-下)
-      - [2.2.2 Msys2 配置](#222-msys2-配置)
-      - [2.2.3 安装工具](#223-安装工具)
-      - [2.2.4 配置 Msys2 为 vscode 的默认shell](#224-配置-msys2-为-vscode-的默认shell)
-  - [参考](#参考)
+	- [1. 开发工具](#1-开发工具)
+		- [1.1. 需要安装的工具](#11-需要安装的工具)
+		- [1.2. vscode 插件](#12-vscode-插件)
+	- [2. 开发环境搭建](#2-开发环境搭建)
+		- [2.1. 安装编辑器](#21-安装编辑器)
+		- [2.2 安装 Msys2](#22-安装-msys2)
+			- [2.2.1 将 Msys2 添加到 Terminal 下](#221-将-msys2-添加到-terminal-下)
+			- [2.2.2 Msys2 配置](#222-msys2-配置)
+			- [2.2.3 安装工具](#223-安装工具)
+			- [2.2.4 配置 Msys2 为 vscode 的默认shell](#224-配置-msys2-为-vscode-的默认shell)
+	- [3. 使用 cmake 来构建交叉编译环境](#3-使用-cmake-来构建交叉编译环境)
+		- [3.1. 编译脚本结构](#31-编译脚本结构)
+	- [参考](#参考)
 
 ## 1. 开发工具
 
@@ -158,7 +160,58 @@ pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-arm-none-eabi-toolchain mi
   }
 ```
 
-当然在你的工程的 `.vscode/settings.json` 中添加也可以。此时 `vscode` 的默认 `shell` 就被替换成了 `Msys2`。
+当然在你的工程的 `.vscode/settings.json` 中添加也可以。此时 `vscode` 的默认 `shell` 就被替换成了 `Msys2`。事实上只给 workspace 的 settings.json 是一个更好的选择，很多时候 Msys2 的 terminal 并不如 powershell 好用。
+
+## 3. 使用 cmake 来构建交叉编译环境
+
+如果你使用 CubeMX 来生成你的外设配置，那么可以在生成代码的配置选项中选择生成 makefiles 的工程。可以看看 CubeMX 生成的 makefiles，它十分复杂且不直观。并且 makefiles 依赖于 make 或 MingwMake，在跨平台和更改编译器时就没有那么灵活了。因此我们选择使用 `cmake` 来编写编译脚本，来生成 makefiles 或者 build.ninja 来适配编译器。
+
+但是这时的编译过程和常见的编译过程并不太相同。一般来讲，我们编译的结果直接在本机上运行就可以来，但是进行嵌入式开发时，需要为另一个设备编译代码，就是我们所说的交叉编译。但是一般的编译工具，比如 MinGW，它并不知道编译目标平台的信息，因此我们需要我们之前安装的交叉编译工具 `arm-none-eabi-toolchain` 来生成 Arm 平台上的代码。交叉编译并不像直接给本机编译那么容易，平台之间并的处理器架构、位宽等并不相同，我们需要告诉编译器编译目标器件的信息。
+
+### 3.1. 编译脚本结构
+
+一般来讲，使用 `cmake` 构建的编译工程由 `CMakeLists.txt` 和 `*.cmake` 组成。我们的工程的文件结构如下：
+
+```shell
+FOC
+├── CMakeLists.txt
+├── LICENSE
+├── README.md
+├── build
+├── code
+├── doc
+└── toolchain
+```
+
+在我们的 `cmake` 编译脚本中，主要要完成一下几个配置：
+
+1. **交叉编译工具链配置**：配置告诉编译器使用的交叉编译工具链，并配置编译目标的架构
+2. **编译文件和头文件**：配置被编译的源文件和头文件
+3. **编译器和链接器选项**：配置编译器的优化、编译参数和链接器的的参数
+4. **其他编译指令和规则**：配置一些我们需要，但是编译器没有直接提供的编译脚本，例如下载代码、生成 `.bin`, `.elf`, `.map` 等
+
+一般的使用 `cmake` 的工程都会在根目录下建立一个 `CMakeLists.txt` 这是整个编译脚本的入口，就像 C 语言中的 `main.c` 一样。理论上可以把所有的编译指令都写在根目录的 `CMakeLists.txt` 中。但是就像是任何人都不会把所有的代码都写在 `main.c` 里一样，如果将所有的编译脚本都在写 `CMakeLists.txt` 中，整个脚本会及其臃肿，难以阅读。因此需要使用 `.cmake` 文件来配置功能。
+
+例如，在我们的工程中，使用 `toolchain` 中包含了编译工具链和所有的配置文件。其文件结构如下：
+
+```shell
+toolchain
+├── STM32G474VETx_FLASH.ld
+├── cmake
+│   ├── arm_none_eabi.cmake
+│   ├── complie.cmake
+│   ├── config.cmake
+│   ├── cortex_m4f.cmake
+│   └── custom_rule.cmake
+├── openocd_scripts
+│   ├── openocd-stm32g4-jlink.cfg
+│   └── openocd-stm32g4-stlink.cfg
+├── startup_stm32g474xx.s
+└── svd
+    └── STM32G474xx.svd
+```
+
+
 
 ## 参考
 
