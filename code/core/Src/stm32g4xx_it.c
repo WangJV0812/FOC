@@ -29,6 +29,7 @@ extern DMA_HandleTypeDef hdma_spi4_tx;
 extern SPI_HandleTypeDef hspi3;
 extern SPI_HandleTypeDef hspi4;
 extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim5;
 
 /******************************************************************************/
 /*           Cortex-M4 Processor Interruption and Exception Handlers          */
@@ -157,4 +158,9 @@ void SPI3_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
     HAL_TIM_IRQHandler(&htim3);
+}
+
+void TIM5_IRQHandler(void)
+{
+    HAL_TIM_IRQHandler(&htim5);
 }

@@ -1,4 +1,5 @@
 #include "bsp.h"
+#include "bsp_tim.h"
 
 __weak void Error_Handler(void)
 {
@@ -40,6 +41,7 @@ HAL_StatusTypeDef system_init()
 void bsp_init()
 {
     system_init();
+    MX_TIM5_Init();
     MX_CORDIC_Init();
     MX_SPI3_Init();
     MX_SPI4_Init();
