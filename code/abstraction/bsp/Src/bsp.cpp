@@ -1,4 +1,5 @@
 #include "bsp.h"
+#include "bsp_adc.h"
 #include "bsp_tim.h"
 
 __weak void Error_Handler(void)
@@ -45,6 +46,11 @@ void bsp_init()
     MX_CORDIC_Init();
     MX_SPI3_Init();
     MX_SPI4_Init();
+
     MX_HRTIM1_Init();
+    MX_ADC1_Init();
+    MX_ADC2_Init();
+
+    ADC_calibration_start();
 
 }

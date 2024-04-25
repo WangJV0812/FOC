@@ -152,6 +152,7 @@ void     HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
     if (htim->Instance == TIM5) {
         count_100us += 1;
+        count_1ms += 1;
     } else if (htim->Instance == TIM3) {
     }
 }
