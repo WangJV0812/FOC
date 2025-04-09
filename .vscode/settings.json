@@ -43,7 +43,7 @@
     //     }
     // },
     "cmake.options.statusBarVisibility": "icon",
-    "workbench.iconTheme": "material-icon-theme",
+    "workbench.iconTheme": "vs-seti",
     // "terminal.integrated.automationProfile.windows": {
     //     "path": "powershell.exe",
     // },
@@ -57,5 +57,4 @@
     "cortex-debug.gdbPath": "arm-none-eabi-gdb",
     "cortex-debug.variableUseNaturalFormat": false,
     "c-cpp-compile-run.should-show-notifications": false
-
 }

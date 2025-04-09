@@ -24,7 +24,6 @@ include_directories (
     ${CMAKE_CURRENT_LIST_DIR}/code/core/Inc
     ${CMAKE_CURRENT_LIST_DIR}/code/core/config
     ${CMAKE_CURRENT_LIST_DIR}/code/abstraction/CMSIS/Include
-
 )
 
 set(ASM_SOURCE

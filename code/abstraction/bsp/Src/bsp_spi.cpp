@@ -27,7 +27,7 @@ void MX_SPI3_Init(void)
     hspi3.Init.CLKPolarity       = SPI_POLARITY_HIGH;
     hspi3.Init.CLKPhase          = SPI_PHASE_2EDGE;
     hspi3.Init.NSS               = SPI_NSS_SOFT;
-    hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4; /* Baud Rate: 21.25 MBits/s */
+    hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8; /* Baud Rate: 21.25 MBits/s */
     hspi3.Init.FirstBit          = SPI_FIRSTBIT_MSB;
     hspi3.Init.TIMode            = SPI_TIMODE_DISABLE;
     hspi3.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLE;
@@ -54,7 +54,7 @@ void MX_SPI4_Init(void)
     hspi4.Init.CLKPolarity       = SPI_POLARITY_HIGH;
     hspi4.Init.CLKPhase          = SPI_PHASE_2EDGE;
     hspi4.Init.NSS               = SPI_NSS_SOFT;
-    hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+    hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
     hspi4.Init.FirstBit          = SPI_FIRSTBIT_MSB;
     hspi4.Init.TIMode            = SPI_TIMODE_DISABLE;
     hspi4.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLE;
@@ -285,6 +285,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef* hspi)
 {
     if (hspi->Instance == SPI3) {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
     } else if (hspi->Instance == SPI4) {
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
     }
@@ -299,9 +300,8 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef* hspi)
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef* hspi)
 {
     if (hspi->Instance == SPI3) {
-        // HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI4_Rx_Buffer, 2);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
     } else if (hspi->Instance == SPI4) {
-        // HAL_SPI_Receive_DMA(hspi, (uint8_t*)&SPI3_Rx_Buffer, 2);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
     }
 }

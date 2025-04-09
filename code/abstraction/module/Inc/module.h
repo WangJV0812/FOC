@@ -1,15 +1,16 @@
 #ifndef __MODULE_H
 #define __MODULE_H
 
-#ifdef __cplusplus
+
+#include "status.h"
+
 extern "C" {
-#endif
-
 #include "bsp.h"
-#include "encoder.h"
-
-
-#ifdef __cplusplus
 }
-#endif
+
+#include "softTimer.h"
+#include "encoder.h"
+#include "temperature.h"
+
+
 #endif

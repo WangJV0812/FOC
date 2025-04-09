@@ -137,7 +137,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
  * @brief 
  * @param  tim_pwmHandle    My Param doc
  * @date 2024-04-09
- * @author wangjv (wangjv0812@126.com)
+ * @author wangjv (wangjv0812@126.com)s
  */
 void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle)
 {
@@ -148,7 +148,7 @@ void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle)
 
 uint32_t count_100us = 0;
 uint32_t count_1ms   = 0;
-void     HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
     if (htim->Instance == TIM5) {
         count_100us += 1;
