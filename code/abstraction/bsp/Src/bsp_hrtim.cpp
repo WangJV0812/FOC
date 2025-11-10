@@ -26,7 +26,8 @@ void MX_HRTIM1_Init(void)
         Error_Handler();
     }
     pADCTriggerCfg.UpdateSource = HRTIM_ADCTRIGGERUPDATE_TIMER_A;
-    pADCTriggerCfg.Trigger      = HRTIM_ADCTRIGGEREVENT13_NONE;
+    /* Trigger ADC at Timer A period (center of PWM in up-down mode) - good for FOC current sampling */
+    pADCTriggerCfg.Trigger      = HRTIM_ADCTRIGGEREVENT13_TIMERA_PERIOD;
     if (HAL_HRTIM_ADCTriggerConfig(&hhrtim1, HRTIM_ADCTRIGGER_1, &pADCTriggerCfg) != HAL_OK) {
         Error_Handler();
     }
@@ -34,7 +35,8 @@ void MX_HRTIM1_Init(void)
         Error_Handler();
     }
     pADCTriggerCfg.UpdateSource = HRTIM_ADCTRIGGERUPDATE_TIMER_B;
-    pADCTriggerCfg.Trigger      = HRTIM_ADCTRIGGEREVENT24_NONE;
+    /* Trigger ADC2 at Timer B period so ADC sampling is aligned with Timer B (if used) */
+    pADCTriggerCfg.Trigger      = HRTIM_ADCTRIGGEREVENT24_TIMERB_PERIOD;
     if (HAL_HRTIM_ADCTriggerConfig(&hhrtim1, HRTIM_ADCTRIGGER_2, &pADCTriggerCfg) != HAL_OK) {
         Error_Handler();
     }
@@ -194,7 +196,8 @@ void MX_HRTIM1_Init(void)
     }
     if (HAL_HRTIM_RollOverModeConfig(&hhrtim1,
                                      HRTIM_TIMERINDEX_TIMER_B,
-                                     HRTIM_TIM_FEROM_BOTH | HRTIM_TIM_BMROM_BOTH | HRTIM_TIM_ADROM_BOTH
+                                     /* Make rollover behaviour consistent with Timer A/E: use CREST for ADC roll-over */
+                                     HRTIM_TIM_FEROM_BOTH | HRTIM_TIM_BMROM_BOTH | HRTIM_TIM_ADROM_CREST
                                          | HRTIM_TIM_OUTROM_BOTH | HRTIM_TIM_ROM_BOTH)
         != HAL_OK) {
         Error_Handler();
@@ -203,7 +206,8 @@ void MX_HRTIM1_Init(void)
         != HAL_OK) {
         Error_Handler();
     }
-    pTimeBaseCfg.Period = 0xFFDF;
+    /* Use same period as Timer A/B/E to keep PWM frequencies consistent (54400) */
+    pTimeBaseCfg.Period = 54400;
     if (HAL_HRTIM_TimeBaseConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_C, &pTimeBaseCfg) != HAL_OK) {
         Error_Handler();
     }
@@ -236,7 +240,8 @@ void MX_HRTIM1_Init(void)
         != HAL_OK) {
         Error_Handler();
     }
-    pTimeBaseCfg.Period = 0xFFDF;
+    /* Use same period as Timer A/B/E to keep PWM frequencies consistent (54400) */
+    pTimeBaseCfg.Period = 54400;
     if (HAL_HRTIM_TimeBaseConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_F, &pTimeBaseCfg) != HAL_OK) {
         Error_Handler();
     }

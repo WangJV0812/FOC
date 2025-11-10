@@ -3,7 +3,12 @@
 
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
+DMA_HandleTypeDef hdma_adc1;
 DMA_HandleTypeDef hdma_adc2;
+
+// DMA buffers for ADC data
+uint16_t adc1_dma_buffer[3] = {0};  // 3-phase currents (Phase A, B, C)
+uint16_t adc2_dma_buffer[2] = {0};  // Other signals (e.g., Vbus, temperature)
 
 /* ADC1 init function */
 void MX_ADC1_Init(void)
@@ -26,16 +31,16 @@ void MX_ADC1_Init(void)
     hadc1.Init.Resolution            = ADC_RESOLUTION_12B;
     hadc1.Init.DataAlign             = ADC_DATAALIGN_RIGHT;
     hadc1.Init.GainCompensation      = 0;
-    hadc1.Init.ScanConvMode          = ADC_SCAN_DISABLE;
-    hadc1.Init.EOCSelection          = ADC_EOC_SINGLE_CONV;
+    hadc1.Init.ScanConvMode          = ADC_SCAN_ENABLE;           // Enable scan mode for multiple channels
+    hadc1.Init.EOCSelection          = ADC_EOC_SEQ_CONV;          // End of sequence conversion
     hadc1.Init.LowPowerAutoWait      = DISABLE;
-    hadc1.Init.ContinuousConvMode    = DISABLE;
-    hadc1.Init.NbrOfConversion       = 1;
+    hadc1.Init.ContinuousConvMode    = DISABLE;                    // Triggered by HRTIM, not continuous
+    hadc1.Init.NbrOfConversion       = 3;                          // 3 channels (e.g., 3-phase currents)
     hadc1.Init.DiscontinuousConvMode = DISABLE;
-    hadc1.Init.ExternalTrigConv      = ADC_SOFTWARE_START;
-    hadc1.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE;
-    hadc1.Init.DMAContinuousRequests = DISABLE;
-    hadc1.Init.Overrun               = ADC_OVR_DATA_PRESERVED;
+    hadc1.Init.ExternalTrigConv      = ADC_EXTERNALTRIG_HRTIM_TRG1; // HRTIM ADC Trigger 1
+    hadc1.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_RISING; // Trigger on rising edge
+    hadc1.Init.DMAContinuousRequests = ENABLE;                     // Enable DMA continuous requests
+    hadc1.Init.Overrun               = ADC_OVR_DATA_OVERWRITTEN;   // Overwrite old data if not read
     hadc1.Init.OversamplingMode      = DISABLE;
     if (HAL_ADC_Init(&hadc1) != HAL_OK) {
         Error_Handler();
@@ -48,14 +53,30 @@ void MX_ADC1_Init(void)
         Error_Handler();
     }
 
-    /** Configure Regular Channel
+    /** Configure Regular Channel - Phase A Current
   */
-    sConfig.Channel      = ADC_CHANNEL_4;
+    sConfig.Channel      = ADC_CHANNEL_1;
     sConfig.Rank         = ADC_REGULAR_RANK_1;
-    sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+    sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;  // Longer sampling time for stable reading
     sConfig.SingleDiff   = ADC_SINGLE_ENDED;
     sConfig.OffsetNumber = ADC_OFFSET_NONE;
     sConfig.Offset       = 0;
+    if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+        Error_Handler();
+    }
+    
+    /** Configure Regular Channel - Phase B Current
+  */
+    sConfig.Channel = ADC_CHANNEL_2;
+    sConfig.Rank    = ADC_REGULAR_RANK_2;
+    if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
+        Error_Handler();
+    }
+    
+    /** Configure Regular Channel - Phase C Current
+  */
+    sConfig.Channel = ADC_CHANNEL_3;
+    sConfig.Rank    = ADC_REGULAR_RANK_3;
     if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
         Error_Handler();
     }
@@ -86,13 +107,13 @@ void MX_ADC2_Init(void)
     hadc2.Init.ScanConvMode          = ADC_SCAN_ENABLE;
     hadc2.Init.EOCSelection          = ADC_EOC_SEQ_CONV;
     hadc2.Init.LowPowerAutoWait      = DISABLE;
-    hadc2.Init.ContinuousConvMode    = ENABLE;
+    hadc2.Init.ContinuousConvMode    = DISABLE;                     // Triggered by HRTIM, not continuous
     hadc2.Init.NbrOfConversion       = 2;
     hadc2.Init.DiscontinuousConvMode = DISABLE;
-    hadc2.Init.ExternalTrigConv      = ADC_SOFTWARE_START;
-    hadc2.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE;
-    hadc2.Init.DMAContinuousRequests = DISABLE;
-    hadc2.Init.Overrun               = ADC_OVR_DATA_PRESERVED;
+    hadc2.Init.ExternalTrigConv      = ADC_EXTERNALTRIG_HRTIM_TRG2; // HRTIM ADC Trigger 2
+    hadc2.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_RISING; // Trigger on rising edge
+    hadc2.Init.DMAContinuousRequests = ENABLE;                      // Enable DMA continuous requests
+    hadc2.Init.Overrun               = ADC_OVR_DATA_OVERWRITTEN;    // Overwrite old data if not read
     hadc2.Init.OversamplingMode      = DISABLE;
     if (HAL_ADC_Init(&hadc2) != HAL_OK) {
         Error_Handler();
@@ -171,6 +192,23 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+        /* ADC1 DMA Init */
+        /* ADC1 Init */
+        hdma_adc1.Instance                 = DMA1_Channel1;
+        hdma_adc1.Init.Request             = DMA_REQUEST_ADC1;
+        hdma_adc1.Init.Direction           = DMA_PERIPH_TO_MEMORY;
+        hdma_adc1.Init.PeriphInc           = DMA_PINC_DISABLE;
+        hdma_adc1.Init.MemInc              = DMA_MINC_ENABLE;
+        hdma_adc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        hdma_adc1.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        hdma_adc1.Init.Mode                = DMA_CIRCULAR;  // Circular mode for continuous sampling
+        hdma_adc1.Init.Priority            = DMA_PRIORITY_HIGH;  // High priority for FOC current loop
+        if (HAL_DMA_Init(&hdma_adc1) != HAL_OK) {
+            Error_Handler();
+        }
+
+        __HAL_LINKDMA(adcHandle, DMA_Handle, hdma_adc1);
+
         /* ADC1 interrupt Init */
         HAL_NVIC_SetPriority(ADC1_2_IRQn, 0, 0);
         HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
@@ -215,8 +253,8 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
         hdma_adc2.Init.MemInc              = DMA_MINC_ENABLE;
         hdma_adc2.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
         hdma_adc2.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
-        hdma_adc2.Init.Mode                = DMA_NORMAL;
-        hdma_adc2.Init.Priority            = DMA_PRIORITY_LOW;
+        hdma_adc2.Init.Mode                = DMA_CIRCULAR;  // Circular mode for continuous sampling
+        hdma_adc2.Init.Priority            = DMA_PRIORITY_MEDIUM;
         if (HAL_DMA_Init(&hdma_adc2) != HAL_OK) {
             Error_Handler();
         }
@@ -259,6 +297,9 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
         HAL_GPIO_DeInit(GPIOC, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2);
 
         HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
+
+        /* ADC1 DMA DeInit */
+        HAL_DMA_DeInit(adcHandle->DMA_Handle);
 
         /* ADC1 interrupt Deinit */
         /* USER CODE BEGIN ADC1:ADC1_2_IRQn disable */
@@ -339,4 +380,48 @@ void ADC2_Channel_Conversion(float _conversion_sequence_p[])
     }
 }
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {}
+/**
+ * @brief ADC conversion complete callback (called by DMA interrupt at ~50kHz)
+ * @param hadc: ADC handle pointer
+ * 
+ * This callback is invoked automatically when ADC conversion sequence completes.
+ * For FOC motor control, this is the ideal place to implement the current control loop:
+ * 
+ * 1. Read 3-phase currents from adc1_dma_buffer[0/1/2]
+ * 2. Convert raw ADC values to physical currents (Amperes)
+ * 3. Apply Clarke/Park transforms (abc → αβ → dq)
+ * 4. Execute PI controllers for Id/Iq current regulation
+ * 5. Apply inverse Park/Clarke transforms (dq → αβ → abc)
+ * 6. Update HRTIM compare values for PWM duty cycle control
+ * 
+ * Timing: Triggered by HRTIM ADC trigger at PWM period (crest point in up-down mode)
+ * This ensures sampling occurs when current ripple is minimal.
+ */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) 
+{
+    if (hadc->Instance == ADC1) {
+        // ADC1 conversion complete - 3-phase current data ready in adc1_dma_buffer[]
+        // TODO: Implement FOC current control loop here
+        
+        // Example: Read phase currents
+        // uint16_t ia_raw = adc1_dma_buffer[0];  // Phase A
+        // uint16_t ib_raw = adc1_dma_buffer[1];  // Phase B
+        // uint16_t ic_raw = adc1_dma_buffer[2];  // Phase C
+        
+        // Example: Convert to physical units (assuming current sensor: Vref=1.65V, sensitivity=66mV/A)
+        // float ia = (ia_raw * 3.3f / 4096.0f - 1.65f) / 0.066f;
+        // float ib = (ib_raw * 3.3f / 4096.0f - 1.65f) / 0.066f;
+        // float ic = (ic_raw * 3.3f / 4096.0f - 1.65f) / 0.066f;
+        
+        // TODO: Implement Clarke transform: abc → αβ
+        // TODO: Implement Park transform: αβ → dq (using rotor angle)
+        // TODO: PI controllers for Id/Iq regulation
+        // TODO: Inverse Park: dq → αβ
+        // TODO: Inverse Clarke: αβ → abc (or use SVPWM)
+        // TODO: Update HRTIM compare registers for PWM duty cycles
+    }
+    else if (hadc->Instance == ADC2) {
+        // ADC2 conversion complete - Vbus/temperature data ready in adc2_dma_buffer[]
+        // TODO: Process auxiliary signals (DC bus voltage monitoring, overcurrent protection, etc.)
+    }
+}
